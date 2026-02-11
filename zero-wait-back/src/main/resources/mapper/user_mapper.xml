@@ -4,11 +4,11 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.project.zero_wait_back.mapper.UserMapper">
 
-    <insert id="insertUser" parameterType="com.project.zero_wait_back.dto.UserDto">
+    <insert id="insertUser" parameterType="com.project.zero_wait_back.dto.response.UserRespDto">
         INSERT INTO user_tb (
-        password, nickname, name, phone_number, role, status, created_at
+        password, name, phone_number, role, status, created_at
         ) VALUES (
-        #{password}, #{nickname}, #{name}, #{phoneNumber}, 'USER', 'ACTIVE', NOW()
+        #{password}, #{name}, #{phoneNumber}, 'USER', 'ACTIVE', NOW()
         )
     </insert>
 

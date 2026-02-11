@@ -1,7 +1,10 @@
 package com.project.zero_wait_back.controller;
 
-import com.project.zero_wait_back.dto.UserDto;
+import com.project.zero_wait_back.dto.request.SignUpRequestDto;
+import com.project.zero_wait_back.dto.response.UserRespDto;
 import com.project.zero_wait_back.entity.User;
+import com.project.zero_wait_back.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -9,15 +12,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-    @RequestMapping("/api/users")
-        public class UserController {
+@RequestMapping("/api/users")
+@RequiredArgsConstructor
+public class UserController {
 
-            @PostMapping
-            public ResponseEntity<User> createUser(@RequestBody UserDto dto) {
+    private final UserService userService;
 
-                User user = User.builder()
-                        .password(  )
-                        .build();
+    @PostMapping("/signup")
+    public ResponseEntity<?> createUser(@RequestBody SignUpRequestDto dto) {
+
+        return ResponseEntity.ok(userService.createUser(dto));
 
     }
 
