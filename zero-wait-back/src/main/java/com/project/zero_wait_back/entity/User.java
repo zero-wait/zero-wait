@@ -2,7 +2,6 @@ package com.project.zero_wait_back.entity;
 
 import lombok.*;
 
-
 import java.time.LocalDateTime;
 
 @Data
@@ -13,8 +12,8 @@ public class User {
 
     private int userId;
     private String password;
-    private String nickname;
     private String name;
+    private String email;
     private String phoneNumber;
     private UserRole role;
     private UserStatus status;

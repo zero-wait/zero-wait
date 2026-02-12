@@ -1,10 +1,10 @@
-package com.project.zero_wait_back.dto;
+package com.project.zero_wait_back.dto.response;
 
 import lombok.Data;
 
 @Data
 
-public class UserDto {
+public class UserRespDto {
 
     String password;
     String nickname;
