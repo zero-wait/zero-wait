@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 @Data
 public class RestaurantRespDto {
 
+    private Long restaurantId;
     private String name;
     private String address;
     private String tel;

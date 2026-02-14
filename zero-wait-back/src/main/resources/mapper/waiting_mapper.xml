@@ -4,35 +4,74 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.project.zero_wait_back.mapper.WaitingMapper">
 
-    <insert id="createWaiting" parameterType="com.project.zero_wait_back.entity.Waiting">
-        INSERT INTO waiting_tb (
-            waiting_id,
-            user_id,
-            restaurant_id,
-            wait_number,
-            party_size,
-            status,
-            created_at,
-            is_deleted
-        ) VALUES (
-            #{waitingId},
-            #{userId},
-            #{restaurantId},
-            #{waitNumber},
-            #{partySize},
-            #{status},
-            #{createdAt},
-            #{isDeleted}
-        )
-    </insert>
-
-    <select id="findLastWaitNumberByRestaurantId" resultType="int">
+    <!-- 현재 착석 중인 웨이팅 목록 -->
+    <select id="findArrivedWaitings" resultType="com.project.zero_wait_back.dto.internal.ArrivedWaitingDto">
         SELECT
-            IFNULL(MAX(wait_number), 0)
+            waiting_id waitingId,
+            table_id tableId,
+            seated_at seatedAt,
+            party_size partySize
         FROM
             waiting_tb
         WHERE
-            restaurant_id = #{id}
-            AND DATE(created_at) = CURDATE()
+            restaurant_id = #{restaurantId}
+            AND status = 'ARRIVED'
+            AND is_deleted = 0
+            AND created_at >= CURDATE()
     </select>
+
+
+    <!-- 현재 대기 중인 큐 -->
+    <select id="findWaitingQueue" resultType="com.project.zero_wait_back.dto.internal.WaitingQueueDto">
+        SELECT
+            waiting_id  AS waitingId,
+            wait_number AS waitNumber,
+            party_size  AS partySize,
+            created_at  AS createdAt
+        FROM
+            waiting_tb
+        WHERE
+            restaurant_id = #{restaurantId}
+            AND status = 'WAITING'
+            AND is_deleted = 0
+            AND created_at >= CURDATE()
+        ORDER BY
+            wait_number ASC
+    </select>
+
+
+    <!-- 최근 7일 평균 이용시간 (분) -->
+    <select id="findAvgUsageMinutes" resultType="java.lang.Integer">
+        SELECT
+            ROUND(AVG(TIMESTAMPDIFF(MINUTE, seated_at, finished_at)), 0)
+        FROM
+            waiting_tb
+        WHERE
+            restaurant_id = #{restaurantId}
+            AND status = 'FINISHED'
+            AND seated_at IS NOT NULL
+            AND finished_at IS NOT NULL
+            AND finished_at > seated_at
+            AND is_deleted = 0
+            AND created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+            AND created_at &lt; DATE_ADD(CURDATE(), INTERVAL 1 DAY)
+            AND TIMESTAMPDIFF(MINUTE, seated_at, finished_at) BETWEEN 1 AND 300
+    </select>
+
+
+    <!-- 오늘 마지막 대기번호 -->
+    <select id="findLastWaitNumberByRestaurantId" resultType="java.lang.Integer">
+        SELECT
+            COALESCE(MAX(wait_number), 0)
+        FROM
+            waiting_tb
+        WHERE
+            restaurant_id = #{restaurantId}
+            AND is_deleted = 0
+            AND created_at >= CURDATE()
+    </select>
+
+
+
+
 </mapper>
