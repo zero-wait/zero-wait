@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.zero_wait_back.mapper.RestaurantMapper">
+
+    <sql id="openStatusCTE">
+        open_status AS (
+            SELECT
+                oh.restaurant_id,
+                oh.open_time,
+                oh.close_time,
+                oh.break_start,
+                oh.break_end,
+                (CASE
+                    WHEN EXISTS (
+                        SELECT 1
+                        FROM holiday_tb h
+                        WHERE h.restaurant_id = oh.restaurant_id
+                            AND h.type = 'WEEKLY'
+                            AND h.day_of_week = DAYOFWEEK(NOW())
+                            AND h.is_deleted = 0
+                    ) THEN 0
+                    WHEN EXISTS (
+                        SELECT 1
+                        FROM holiday_tb h
+                        WHERE h.restaurant_id = oh.restaurant_id
+                            AND h.type = 'TEMPORARY'
+                            AND h.specific_date = CURDATE()
+                            AND h.is_deleted = 0
+                    ) THEN 0
+                    WHEN CURTIME() NOT BETWEEN oh.open_time AND oh.close_time
+                        THEN 0
+                    WHEN oh.break_start IS NOT NULL
+                        AND CURTIME() BETWEEN oh.break_start AND oh.break_end
+                        THEN 0
+                    ELSE 1
+                END) AS is_open
+            FROM
+                operating_hour_tb oh
+            WHERE
+                oh.day_of_week = DAYOFWEEK(NOW())
+        )
+    </sql>
+
+    <sql id="allCTE">
+        WITH
+        <include refid="openStatusCTE"/>,
+        <include refid="waitStatsCTE"/>
+    </sql>
+
+    <sql id="openCTEOnly">
+        WITH
+        <include refid="openStatusCTE"/>
+    </sql>
+
+    <sql id="restaurantSelectColumns">
+        r.*,
+        i.image_url,
+        os.is_open,
+        os.open_time,
+        os.close_time,
+        os.break_start,
+        os.break_end,
+        IFNULL(ws.waiting_count, 0)   AS waiting_count,
+        IFNULL(ws.avg_cycle_time, 20) AS avg_cycle_time,
+        (CASE
+        WHEN (IFNULL(ws.waiting_count, 0)
+        - (r.`table` - IFNULL(ws.occupied_count, 0))) &lt;= 0
+        THEN 0
+        ELSE
+        CEIL(
+        (IFNULL(ws.waiting_count, 0)
+        - (r.`table` - IFNULL(ws.occupied_count, 0)))
+        /
+        IFNULL(NULLIF(ws.occupied_count, 0), 1)
+        ) * IFNULL(ws.avg_cycle_time, 20)
+        END) AS estimated_waiting_time
+    </sql>
+
+    <!-- 공통 JOIN -->
+    <sql id="restaurantJoins">
+        FROM restaurant_tb r
+        JOIN open_status os
+        ON r.restaurant_id = os.restaurant_id
+        LEFT JOIN image_tb i
+        ON r.image_id = i.image_id
+        LEFT JOIN wait_stats ws
+        ON r.restaurant_id = ws.restaurant_id
+    </sql>
+
+    <sql id="waitStatsCTE">
+        wait_stats AS (
+            SELECT
+                restaurant_id,
+                COUNT(CASE
+                    WHEN status = 'WAITING'
+                        AND is_deleted = 0
+                        AND DATE(created_at) = CURDATE()
+                        THEN 1 END
+                ) AS waiting_count,
+                IFNULL(
+                    AVG(CASE
+                        WHEN status = 'FINISHED'
+                            AND is_deleted = 0
+                            AND seated_at   IS NOT NULL
+                            AND finished_at IS NOT NULL
+                            AND created_at  >= DATE_SUB(NOW(), INTERVAL 7 DAY)
+                            THEN TIMESTAMPDIFF(MINUTE, seated_at, finished_at)
+                    END),
+                    20
+                ) AS avg_cycle_time,
+                COUNT(CASE
+                    WHEN status IN ('CALLED', 'ARRIVED')
+                        AND is_deleted = 0
+                        THEN 1 END
+                ) AS occupied_count
+            FROM waiting_tb
+            GROUP BY restaurant_id
+        )
+    </sql>
+    <!--
+        전체 식당 목록
+        - 삭제되지 않은 모든 식당
+        - is_open 컬럼으로 반환 (필터 없음)
+        - 정렬: 영업 중 우선 → 랜덤
+    -->
+    <select id="getAllRestaurant" resultType="com.project.zero_wait_back.dto.response.RestaurantRespDto">
+        <include refid="allCTE"/>
+        SELECT <include refid="restaurantSelectColumns"/>
+        <include refid="restaurantJoins"/>
+        WHERE r.is_deleted = 0
+        ORDER BY os.is_open DESC, RAND()
+    </select>
+
+    <!--
+        카테고리별 식당 목록
+        - is_open 컬럼으로 반환 (필터 없음)
+        - 정렬: 영업 중 우선 → 랜덤
+    -->
+    <select id="getRestaurantByCategory" resultType="com.project.zero_wait_back.dto.response.RestaurantRespDto">
+        <include refid="allCTE"/>
+        SELECT <include refid="restaurantSelectColumns"/>
+        <include refid="restaurantJoins"/>
+        WHERE r.is_deleted = 0
+        AND r.category_id = #{categoryId}
+        ORDER BY os.is_open DESC, RAND()
+    </select>
+
+    <!--
+        현재 웨이팅 가능한 식당만 조회
+        - is_open = 1 필터링
+        - is_waiting = 1 필터링
+        - 정렬: 랜덤
+    -->
+    <select id="getAllOpenRestaurant" resultType="com.project.zero_wait_back.dto.response.RestaurantRespDto">
+        <include refid="allCTE"/>
+        SELECT <include refid="restaurantSelectColumns"/>
+        <include refid="restaurantJoins"/>
+        WHERE r.is_deleted  = 0
+        AND r.is_waiting  = 1
+        AND os.is_open    = 1
+        ORDER BY RAND()
+    </select>
+
+
+</mapper>

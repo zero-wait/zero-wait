@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.project.zero_wait_back.mapper.WaitingMapper">
+
+    <insert id="createWaiting" parameterType="com.project.zero_wait_back.entity.Waiting">
+        INSERT INTO waiting_tb (
+            waiting_id,
+            user_id,
+            restaurant_id,
+            wait_number,
+            party_size,
+            status,
+            created_at,
+            is_deleted
+        ) VALUES (
+            #{waitingId},
+            #{userId},
+            #{restaurantId},
+            #{waitNumber},
+            #{partySize},
+            #{status},
+            #{createdAt},
+            #{isDeleted}
+        )
+    </insert>
+
+    <select id="findLastWaitNumberByRestaurantId" resultType="int">
+        SELECT
+            IFNULL(MAX(wait_number), 0)
+        FROM
+            waiting_tb
+        WHERE
+            restaurant_id = #{id}
+            AND DATE(created_at) = CURDATE()
+    </select>
+</mapper>

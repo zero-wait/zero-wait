@@ -10,15 +10,22 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class User {
 
-    private int userId;
+    private Long userId;
     private String password;
     private String name;
     private String email;
     private String phoneNumber;
-    private UserRole role;
-    private UserStatus status;
+    private Role role;
+    private Status status;
+    private boolean isDeleted = false;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
-    public enum UserRole { USER, OWNER, ADMIN }
-    public enum UserStatus { ACTIVE, SUSPENDED, DELETED }
+    public enum Role {
+        USER, OWNER, ADMIN
+    }
+    public enum Status {
+        ACTIVE, SUSPENDED, DELETED
+    }
+
 }
