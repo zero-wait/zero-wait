@@ -14,12 +14,14 @@ public class Restaurant {
     private Long restaurantId;
     private Integer categoryId;
     private Long ownerId;
+    private Long imageId;
     private String name;
     private String description;
     private String address;
     private String addressDetail;
     private BigDecimal latitude;
     private BigDecimal longitude;
+    private int maxCapacity;
     private String tel;
     private BigDecimal ratingAvg;
     private int reviewCount;

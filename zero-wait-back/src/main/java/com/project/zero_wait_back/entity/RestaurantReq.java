@@ -19,6 +19,7 @@ public class RestaurantReq {
     private String restaurantName;
     private String address;
     private String tel;
+    private int maxCapacity;
     private Status status;
     private String rejectReason;
     private LocalDateTime createdAt;

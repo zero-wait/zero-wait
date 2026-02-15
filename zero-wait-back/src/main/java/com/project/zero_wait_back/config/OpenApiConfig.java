@@ -14,23 +14,9 @@ public class OpenApiConfig {
         info.title("zero-wait project swagger");
         info.version("1.0");
         info.description("기능 시험중");
-//
-//        SecurityRequirement securityRequirement = new SecurityRequirement();
-//        securityRequirement.addList("Bearer Authentication");
-//
-//        SecurityScheme securityScheme = new SecurityScheme();
-//        securityScheme.name("Bearer Authentication");
-//        securityScheme.type(SecurityScheme.Type.HTTP);
-//        securityScheme.scheme("bearer");
-//        securityScheme.bearerFormat("JWT");
-//
-//        Components components = new Components();
-//        components.addSecuritySchemes("Bearer Authentication", securityScheme);
 
         return openAPI
                 .info(info);
-//                .addSecurityItem(securityRequirement)
-//                .components(components);
     }
 
 }

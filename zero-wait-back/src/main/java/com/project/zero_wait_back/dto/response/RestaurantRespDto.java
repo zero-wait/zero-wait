@@ -15,6 +15,7 @@ public class RestaurantRespDto {
     private BigDecimal ratingAvg;
     private Integer categoryId;
     private int isOpen;
+    private int maxCapacity;
     private int waitingCount;
     private int estimatedWaitingTime;
 

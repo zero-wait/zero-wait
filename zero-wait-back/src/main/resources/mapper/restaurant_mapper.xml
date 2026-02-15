@@ -6,53 +6,53 @@
 
     <sql id="openStatusCTE">
         open_status AS (
-            SELECT
-                oh.restaurant_id,
-                oh.open_time,
-                oh.close_time,
-                oh.break_start,
-                oh.break_end,
-                (CASE
-                    WHEN EXISTS (
-                        SELECT 1 FROM holiday_tb h
-                        WHERE h.restaurant_id = oh.restaurant_id
-                        AND h.type = 'WEEKLY'
-                        AND h.day_of_week = DAYOFWEEK(NOW())
-                        AND h.is_deleted = 0
-                ) THEN 0
-                    WHEN EXISTS (
-                        SELECT 1 FROM holiday_tb h
-                        WHERE h.restaurant_id = oh.restaurant_id
-                        AND h.type = 'TEMPORARY'
-                        AND h.specific_date = CURDATE()
-                        AND h.is_deleted = 0
-                    ) THEN 0
-                    WHEN CURTIME() NOT BETWEEN oh.open_time AND oh.close_time THEN 0
-                    WHEN oh.break_start IS NOT NULL
-                        AND CURTIME() BETWEEN oh.break_start AND oh.break_end THEN 0
-                    ELSE 1
-                END) AS is_open
-            FROM
-                operating_hour_tb oh
-            WHERE
-                oh.day_of_week = DAYOFWEEK(NOW())
-            )
+        SELECT
+        oh.restaurant_id,
+        oh.open_time,
+        oh.close_time,
+        oh.break_start,
+        oh.break_end,
+        (CASE
+        WHEN EXISTS (
+        SELECT 1 FROM holiday_tb h
+        WHERE h.restaurant_id = oh.restaurant_id
+        AND h.type = 'WEEKLY'
+        AND h.day_of_week = DAYOFWEEK(NOW())
+        AND h.is_deleted = 0
+        ) THEN 0
+        WHEN EXISTS (
+        SELECT 1 FROM holiday_tb h
+        WHERE h.restaurant_id = oh.restaurant_id
+        AND h.type = 'TEMPORARY'
+        AND h.specific_date = CURDATE()
+        AND h.is_deleted = 0
+        ) THEN 0
+        WHEN CURTIME() NOT BETWEEN oh.open_time AND oh.close_time THEN 0
+        WHEN oh.break_start IS NOT NULL
+        AND CURTIME() BETWEEN oh.break_start AND oh.break_end THEN 0
+        ELSE 1
+        END) AS is_open
+        FROM
+        operating_hour_tb oh
+        WHERE
+        oh.day_of_week = DAYOFWEEK(NOW())
+        )
     </sql>
 
     <sql id="waitStatsCTE">
         wait_stats AS (
-            SELECT
-                restaurant_id,
-                COUNT(CASE
-                    WHEN status = 'WAITING'
-                    AND is_deleted = 0
-                    AND DATE(created_at) = CURDATE()
-                    THEN 1 END
-                ) AS waiting_count
-            FROM
-                waiting_tb
-            GROUP BY
-                restaurant_id
+        SELECT
+        restaurant_id,
+        COUNT(CASE
+        WHEN status = 'WAITING'
+        AND is_deleted = 0
+        AND DATE(created_at) = CURDATE()
+        THEN 1 END
+        ) AS waiting_count
+        FROM
+        waiting_tb
+        GROUP BY
+        restaurant_id
         )
     </sql>
 
@@ -63,30 +63,31 @@
     </sql>
 
     <sql id="restaurantSelectColumns">
-        r.restaurant_id restaurantId,
+        r.restaurant_id     AS restaurantId,
         r.name,
         r.address,
         r.tel,
-        r.rating_avg ratingAvg,
-        r.category_id categoryId,
-        r.is_waiting isWaiting,
-        i.image_url imageUrl,
-        os.is_open isOpen,
+        r.rating_avg        AS ratingAvg,
+        r.category_id       AS categoryId,
+        r.max_capacity      AS maxCapacity,
+        r.is_waiting        AS isWaiting,
+        i.image_url         AS imageUrl,
+        os.is_open          AS isOpen,
         IFNULL(ws.waiting_count, 0) AS waitingCount
     </sql>
 
     <sql id="restaurantJoins">
         FROM
-            restaurant_tb r
+        restaurant_tb r
         JOIN
-            open_status os
-            ON r.restaurant_id = os.restaurant_id
+        open_status os
+        ON r.restaurant_id = os.restaurant_id
         LEFT JOIN
-            image_tb i
-            ON r.image_id = i.image_id
+        image_tb i
+        ON r.image_id = i.image_id
         LEFT JOIN
-            wait_stats ws
-            ON r.restaurant_id = ws.restaurant_id
+        wait_stats ws
+        ON r.restaurant_id = ws.restaurant_id
     </sql>
 
     <select id="getRestaurants" resultType="com.project.zero_wait_back.dto.response.RestaurantRespDto">
@@ -101,8 +102,7 @@
             AND os.is_open = 1
             AND r.is_waiting = 1
         </if>
-        ORDER BY
-        os.is_open DESC, RAND()
+        ORDER BY os.is_open DESC, RAND()
     </select>
 
 </mapper>
