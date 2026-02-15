@@ -15,7 +15,7 @@ public class RestaurantController {
 
     public final RestaurantService restaurantService;
 
-    @GetMapping
+    @GetMapping("/get")
     public ResponseEntity<List<RestaurantRespDto>> getRestaurants(
             @RequestParam(required = false) Integer categoryId,
             @RequestParam(required = false) Boolean isOpen) {

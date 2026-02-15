@@ -24,10 +24,10 @@
     <!-- 현재 대기 중인 큐 -->
     <select id="findWaitingQueue" resultType="com.project.zero_wait_back.dto.internal.WaitingQueueDto">
         SELECT
-            waiting_id  AS waitingId,
-            wait_number AS waitNumber,
-            party_size  AS partySize,
-            created_at  AS createdAt
+            waiting_id waitingId,
+            wait_number waitNumber,
+            party_size partySize,
+            created_at createdAt
         FROM
             waiting_tb
         WHERE
@@ -70,8 +70,5 @@
             AND is_deleted = 0
             AND created_at >= CURDATE()
     </select>
-
-
-
 
 </mapper>
