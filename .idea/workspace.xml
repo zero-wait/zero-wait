@@ -4,11 +4,25 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="dc655502-2236-4c9b-9e91-e6ed9ab6baf5" name="변경" comment="" />
+    <list default="true" id="dc655502-2236-4c9b-9e91-e6ed9ab6baf5" name="변경" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/zero-wait-front/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/zero-wait-front/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/zero-wait-front/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/zero-wait-front/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/zero-wait-front/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/zero-wait-front/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/zero-wait-front/src/App.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/zero-wait-front/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/zero-wait-front/src/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/zero-wait-front/src/assets/react.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/zero-wait-front/src/main.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/zero-wait-front/src/main.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/zero-wait-front/tsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/zero-wait-front/tsconfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/zero-wait-front/vite.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/zero-wait-front/vite.config.ts" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="MavenImportPreferences">
     <option name="generalSettings">
@@ -30,8 +44,14 @@
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "8-레스토랑-프론트-띄우기-해볼까나",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/code_project/zero-wait",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
     "vue.rearranger.settings.migration": "true"
   }
@@ -76,6 +96,13 @@
       <updated>1770597323232</updated>
       <workItem from="1770597324295" duration="202000" />
       <workItem from="1770639158352" duration="7000" />
+      <workItem from="1770642622966" duration="21000" />
+      <workItem from="1770771642379" duration="870000" />
+      <workItem from="1770773000068" duration="30000" />
+      <workItem from="1770874620512" duration="695000" />
+      <workItem from="1771081043400" duration="737000" />
+      <workItem from="1771082144718" duration="11000" />
+      <workItem from="1771130754328" duration="59000" />
     </task>
     <servers />
   </component>
